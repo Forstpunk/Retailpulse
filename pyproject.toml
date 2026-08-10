@@ -1,0 +1,17 @@
+[project]
+name = "c-d-e"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Anis", email = "kaarthianis27@example.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+c-d-e = "c_d_e:main"
+
+[build-system]
+requires = ["uv_build>=0.10.6,<0.11.0"]
+build-backend = "uv_build"
