@@ -39,9 +39,3 @@ CREATE INDEX idx_products_updated_at
 
 CREATE INDEX idx_stores_updated_at
     ON retail.stores(updated_at);
-
-CREATE INDEX idx_suppliers_updated_at
-    ON retail.suppliers(updated_at);
-
-CREATE INDEX idx_promotions_updated_at
-    ON retail.promotions(updated_at);

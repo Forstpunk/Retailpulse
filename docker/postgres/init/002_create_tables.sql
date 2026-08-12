@@ -1,15 +1,14 @@
 CREATE TABLE retail.categories (
-    category_id          BIGINT PRIMARY KEY,
-    category_name        VARCHAR(100) NOT NULL,
-    parent_category_id   BIGINT,
-    created_at            TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at            TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    category_id      BIGINT PRIMARY KEY,
+    category_name    VARCHAR(100) NOT NULL,
+    parent_category_id BIGINT,
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_category_parent
         FOREIGN KEY (parent_category_id)
         REFERENCES retail.categories(category_id)
 );
-
 
 CREATE TABLE retail.suppliers (
     supplier_id      BIGINT PRIMARY KEY,
@@ -22,7 +21,6 @@ CREATE TABLE retail.suppliers (
     CONSTRAINT chk_supplier_status
         CHECK (status IN ('ACTIVE', 'INACTIVE', 'SUSPENDED'))
 );
-
 
 CREATE TABLE retail.products (
     product_id        BIGINT PRIMARY KEY,
@@ -54,7 +52,6 @@ CREATE TABLE retail.products (
         CHECK (status IN ('ACTIVE', 'INACTIVE', 'DISCONTINUED'))
 );
 
-
 CREATE TABLE retail.stores (
     store_id          BIGINT PRIMARY KEY,
     store_code        VARCHAR(30) NOT NULL UNIQUE,
@@ -76,7 +73,6 @@ CREATE TABLE retail.stores (
         CHECK (store_type IN ('RETAIL', 'WAREHOUSE', 'OUTLET'))
 );
 
-
 CREATE TABLE retail.customers (
     customer_id       BIGINT PRIMARY KEY,
     first_name        VARCHAR(100) NOT NULL,
@@ -88,7 +84,7 @@ CREATE TABLE retail.customers (
     country_code      CHAR(2),
     customer_segment  VARCHAR(50) NOT NULL,
     date_of_birth     DATE,
-    status             VARCHAR(30) NOT NULL,
+    status            VARCHAR(30) NOT NULL,
     created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -102,7 +98,6 @@ CREATE TABLE retail.customers (
     CONSTRAINT chk_customer_status
         CHECK (status IN ('ACTIVE', 'INACTIVE', 'BLOCKED'))
 );
-
 
 CREATE TABLE retail.orders (
     order_id          BIGINT PRIMARY KEY,
@@ -148,7 +143,6 @@ CREATE TABLE retail.orders (
         ))
 );
 
-
 CREATE TABLE retail.order_items (
     order_item_id     BIGINT PRIMARY KEY,
     order_id          BIGINT NOT NULL,
@@ -176,7 +170,6 @@ CREATE TABLE retail.order_items (
     CONSTRAINT chk_order_item_unit_price
         CHECK (unit_price >= 0)
 );
-
 
 CREATE TABLE retail.payments (
     payment_id       BIGINT PRIMARY KEY,
@@ -216,7 +209,6 @@ CREATE TABLE retail.payments (
         CHECK (amount >= 0)
 );
 
-
 CREATE TABLE retail.returns (
     return_id          BIGINT PRIMARY KEY,
     order_item_id      BIGINT NOT NULL,
@@ -250,7 +242,6 @@ CREATE TABLE retail.returns (
         ))
 );
 
-
 CREATE TABLE retail.inventory (
     inventory_id       BIGINT PRIMARY KEY,
     store_id           BIGINT NOT NULL,
@@ -274,7 +265,6 @@ CREATE TABLE retail.inventory (
     CONSTRAINT chk_inventory_reserved
         CHECK (quantity_reserved >= 0)
 );
-
 
 CREATE TABLE retail.promotions (
     promotion_id       BIGINT PRIMARY KEY,
