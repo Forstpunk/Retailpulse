@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: retailpulse
+          POSTGRES_USER: retailpulse
+          POSTGRES_PASSWORD: retailpulse_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U retailpulse -d retailpulse"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: retailpulse
+      POSTGRES_USER: retailpulse
+      POSTGRES_PASSWORD: retailpulse_dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Apply source-schema migrations (scripts/sql)
+        run: |
+          for f in scripts/sql/*.sql; do
+            echo "Applying $f"
+            PGPASSWORD="$POSTGRES_PASSWORD" psql \
+              -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" \
+              -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+              -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Apply warehouse-schema migrations (migrations/)
+        run: |
+          for f in migrations/*.sql; do
+            echo "Applying $f"
+            PGPASSWORD="$POSTGRES_PASSWORD" psql \
+              -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" \
+              -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+              -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Lint (ruff)
+        run: uv run ruff check src tests
+
+      - name: Type check (mypy)
+        run: uv run mypy src
+
+      - name: Test (pytest)
+        run: uv run pytest tests -v
