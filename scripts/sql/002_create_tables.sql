@@ -78,26 +78,23 @@ CREATE TABLE retail.stores (
 
 
 CREATE TABLE retail.customers (
-    customer_id       BIGINT PRIMARY KEY,
-    first_name        VARCHAR(100) NOT NULL,
-    last_name         VARCHAR(100) NOT NULL,
-    email             VARCHAR(255) NOT NULL UNIQUE,
-    phone             VARCHAR(30),
-    city              VARCHAR(100),
-    state             VARCHAR(100),
-    country_code      CHAR(2),
-    customer_segment  VARCHAR(50) NOT NULL,
-    date_of_birth     DATE,
-    status             VARCHAR(30) NOT NULL,
-    created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    customer_id BIGINT PRIMARY KEY,
+    customer_number VARCHAR(30) NOT NULL UNIQUE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(30),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    country_code CHAR(2),
+    customer_segment VARCHAR(50) NOT NULL,
+    date_of_birth DATE,
+    status VARCHAR(30) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_customer_segment
-        CHECK (customer_segment IN (
-            'STANDARD',
-            'PREMIUM',
-            'VIP'
-        )),
+        CHECK (customer_segment IN ('STANDARD', 'PREMIUM', 'VIP')),
 
     CONSTRAINT chk_customer_status
         CHECK (status IN ('ACTIVE', 'INACTIVE', 'BLOCKED'))
