@@ -1,7 +1,7 @@
 [project]
-name = "c-d-e"
+name = "retailpulse"
 version = "0.1.0"
-description = "Add your description here"
+description = "A production-oriented retail data engineering platform"
 readme = "README.md"
 authors = [
     { name = "Anis", email = "kaarthianis27@example.com" }
@@ -15,11 +15,8 @@ dependencies = [
     "pydantic-settings>=2.15.0",
 ]
 
-[project.scripts]
-c-d-e = "c_d_e:main"
-
 [build-system]
-requires = ["uv_build>=0.10.6,<0.11.0"]
+requires = ["uv_build>=0.10.6,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
@@ -28,3 +25,21 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.16.2",
 ]
+
+[tool.ruff.lint]
+# UP047: suggests PEP 695 generic syntax (def foo[T](...)) over
+# TypeVar-based generics. Purely stylistic modernization, not a
+# correctness concern — not worth chasing across the codebase.
+ignore = ["UP047"]
+
+[tool.ruff.lint.per-file-ignores]
+# Test fixtures build calendar dates for deterministic data
+# generation; timezone-awareness doesn't matter for those and
+# isn't worth threading through every literal datetime() call.
+"tests/**" = ["DTZ001"]
+
+# Both are the top-level pipeline stage-failure boundary: it must
+# classify and record *any* exception a stage raises (see
+# pipeline/errors.py::classify_pipeline_error), so a broad
+# `except Exception` here is the architecture, not an oversight.
+"src/retailpulse/pipeline/runner.py" = ["BLE001"]

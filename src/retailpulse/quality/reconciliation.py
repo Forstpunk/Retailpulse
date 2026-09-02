@@ -1,7 +1,13 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from psycopg import Connection
+from psycopg import Connection, Cursor
+
+
+def _fetch_scalar(cursor: Cursor) -> int:
+    row = cursor.fetchone()
+    assert row is not None
+    return row[0]
 
 
 @dataclass(frozen=True)
@@ -72,7 +78,7 @@ def reconcile_transaction_batch(
             ),
         )
 
-        actual_orders = cursor.fetchone()[0]
+        actual_orders = _fetch_scalar(cursor)
 
         # -----------------------------------------------------
         # 2. Actual order-item count
@@ -94,7 +100,7 @@ def reconcile_transaction_batch(
         )
 
         actual_order_items = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
         # -----------------------------------------------------
@@ -120,7 +126,7 @@ def reconcile_transaction_batch(
         )
 
         duplicate_order_ids = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
         # -----------------------------------------------------
@@ -148,7 +154,7 @@ def reconcile_transaction_batch(
         )
 
         duplicate_order_item_ids = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
         # -----------------------------------------------------
@@ -172,7 +178,7 @@ def reconcile_transaction_batch(
         )
 
         orphan_order_items = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
         # -----------------------------------------------------
@@ -206,7 +212,7 @@ def reconcile_transaction_batch(
         )
 
         order_financial_mismatches = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
     passed = all(

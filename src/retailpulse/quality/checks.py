@@ -1,4 +1,4 @@
-from psycopg import Connection
+from psycopg import Connection, Cursor
 
 from retailpulse.quality.models import (
     QualityCheckResult,
@@ -6,6 +6,12 @@ from retailpulse.quality.models import (
     QualityReport,
     QualityStatus,
 )
+
+
+def _fetch_scalar(cursor: Cursor) -> int:
+    row = cursor.fetchone()
+    assert row is not None
+    return row[0]
 
 
 def check_order_count(
@@ -34,7 +40,7 @@ def check_order_count(
             ),
         )
 
-        actual_count = cursor.fetchone()[0]
+        actual_count = _fetch_scalar(cursor)
 
     passed = (
         actual_count == expected_count
@@ -92,7 +98,7 @@ def check_order_item_count(
             ),
         )
 
-        actual_count = cursor.fetchone()[0]
+        actual_count = _fetch_scalar(cursor)
 
     passed = (
         actual_count == expected_count
@@ -153,7 +159,7 @@ def check_duplicate_order_ids(
         )
 
         duplicate_count = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
     passed = duplicate_count == 0
@@ -212,7 +218,7 @@ def check_duplicate_order_item_ids(
         )
 
         duplicate_count = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
     passed = duplicate_count == 0
@@ -267,7 +273,7 @@ def check_orphan_order_items(
         )
 
         orphan_count = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
     passed = orphan_count == 0
@@ -325,7 +331,7 @@ def check_order_financials(
         )
 
         mismatch_count = (
-            cursor.fetchone()[0]
+            _fetch_scalar(cursor)
         )
 
     passed = mismatch_count == 0

@@ -38,13 +38,16 @@ def reference_data_is_ready(
             """
         )
 
+        row = cursor.fetchone()
+        assert row is not None
+
         (
             categories,
             suppliers,
             stores,
             products,
             customers,
-        ) = cursor.fetchone()
+        ) = row
 
     return (
         categories >= config.categories

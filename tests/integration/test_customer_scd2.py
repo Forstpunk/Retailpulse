@@ -5,11 +5,17 @@ from uuid import uuid4
 from retailpulse.analytics.loaders.customer_loader import (
     load_customers,
 )
+from retailpulse.analytics.loaders.date_loader import (
+    load_dates,
+)
 from retailpulse.analytics.loaders.order_fact_loader import (
     load_fact_orders,
 )
 from retailpulse.analytics.models.customer import (
     SourceCustomer,
+)
+from retailpulse.analytics.models.date import (
+    DateDimension,
 )
 from retailpulse.analytics.models.fact_order import (
     SourceOrder,
@@ -249,7 +255,27 @@ def test_fact_order_resolves_current_customer_version_after_segment_change() -> 
         updated_at=t2,
     )
 
+    date_dimension = DateDimension(
+        date_key=20260826,
+        full_date=datetime(
+            2026,
+            8,
+            26,
+        ).date(),
+        day_of_month=26,
+        day_of_week=3,
+        day_name="Wednesday",
+        week_of_year=35,
+        month_number=8,
+        month_name="August",
+        quarter_number=3,
+        year_number=2026,
+        is_weekend=False,
+    )
+
     with get_connection() as connection:
+
+        load_dates(connection, [date_dimension])
 
         load_customers(connection, [v1])
 

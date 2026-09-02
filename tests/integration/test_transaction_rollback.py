@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 from decimal import Decimal
 
+import psycopg
 import pytest
 
 from retailpulse.common.database import get_connection
@@ -73,7 +74,7 @@ def test_failed_transaction_batch_rolls_back() -> None:
 
             before = cursor.fetchone()[0]
 
-        with pytest.raises(Exception):
+        with pytest.raises(psycopg.Error):
             load_transaction_batch(
                 connection,
                 [transaction],
